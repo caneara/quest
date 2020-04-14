@@ -13,7 +13,7 @@
 
 # Quest
 
-This package enables pseudo fuzzy-searching within Laravel database and Eloquent queries. Due to its pattern matching methods, it is currently only supported for use on **MySQL** or **MariaDB**, though I welcome any PRs to enable support for databases like Postgres.
+This package enables pseudo fuzzy-searching within Laravel database and Eloquent queries. Due to its pattern matching methods, it only supports **MySQL** or **MariaDB**, though I welcome any PRs to enable support for databases like Postgres.
 
 Much of this library is based on the fantastic work of Tom Lingham for the now abandoned [Laravel Searchy](https://github.com/TomLingham/Laravel-Searchy) package. If you're interested in the background of how the fuzzy searching works, check out the readme for that project.
 
@@ -39,15 +39,15 @@ DB::table('users')
   ->first();
 
 User::whereFuzzy('name', 'jd') // matches John Doe
-	->first();
+    ->first();
 ```
 
 You can also perform a fuzzy search across multiple columns by chaining several `whereFuzzy` method calls:
 
 ```php
 User::whereFuzzy('name', 'jd')  // matches John Doe
-	->whereFuzzy('email', 'gm') // matches @gmail.com
-	->first();
+    ->whereFuzzy('email', 'gm') // matches @gmail.com
+    ->first();
 ```
 
 ### Ordering results
@@ -60,34 +60,34 @@ User::whereFuzzy('email', 'gm') // relevance_email
 
 This column contains the score that the record received after each of the fuzzy-searching pattern matchers were applied to it. The higher the score, the more closely the record matches the search term.
 
-Of course, you'll want to order the results so that the records with the highest score appear first. To enable this, Quest includes an `orderByFuzzy` method:
+Of course, you'll want to order the results so that the records with the highest score appear first. To make this easier, Quest includes an `orderByFuzzy` helper method that wraps the relevant `orderBy` clauses:
 
 ```php
 User::whereFuzzy('name', 'jd')
-	->orderByFuzzy('name')
-	->first();
+    ->orderByFuzzy('name')
+    ->first();
 
 // Equivalent to:
 
 User::whereFuzzy('name', 'jd')
-	->orderBy('relevance_name', 'desc')
-	->first();
+    ->orderBy('relevance_name', 'desc')
+    ->first();
 ```
 
 If you are searching across multiple fields, you can provide an `array` to the `orderByFuzzy` method:
 
 ```php
 User::whereFuzzy('name', 'jd')
-	->whereFuzzy('email', 'gm')
-	->orderByFuzzy(['name', 'email'])
-	->first();
+    ->whereFuzzy('email', 'gm')
+    ->orderByFuzzy(['name', 'email'])
+    ->first();
 
 // Equivalent to:
 
 User::whereFuzzy('name', 'jd')
-	->orderBy('relevance_name', 'desc')
-	->orderBy('relevance_email', 'desc')
-	->first();
+    ->orderBy('relevance_name', 'desc')
+    ->orderBy('relevance_email', 'desc')
+    ->first();
 ```
 
 ## Limitations
