@@ -1,7 +1,7 @@
 {
     "name": "mattkingshott/quest",
     "description": "A package that provides pseudo fuzzy-searching to Laravel database queries.",
-	"keywords": [
+    "keywords": [
         "quest",
         "php",
         "laravel",
@@ -10,33 +10,33 @@
     ],
     "type": "library",
     "license": "MIT",
-	"homepage": "https://github.com/mattkingshott/quest",
-	"autoload": {
-		"psr-4": {
-			"Quest\\": "src"
-		}
-	},
-	"autoload-dev": {
-		"psr-4": {
-			"Quest\\Tests\\": "tests"
-		}
-	},
+    "homepage": "https://github.com/mattkingshott/quest",
+    "autoload": {
+        "psr-4": {
+            "Quest\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Quest\\Tests\\": "tests"
+        }
+    },
     "require": {
-		"php": "^7.4"
-	},
+        "php": "^7.4"
+    },
     "require-dev": {
         "orchestra/testbench": "^5.0",
         "phpunit/phpunit": "^9.0"
     },
-	"extra": {
-		"laravel": {
-			"providers": [
-				"Quest\\ServiceProvider"
-			]
-		}
-	},
-	"scripts": {
-		"test": "vendor/bin/phpunit"
-	},
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Quest\\ServiceProvider"
+            ]
+        }
+    },
+    "scripts": {
+        "test": "vendor/bin/phpunit"
+    },
     "minimum-stability": "stable"
 }
