@@ -1,27 +1,25 @@
 <?php declare(strict_types = 1);
 
-// Namespace
 namespace Quest\Matchers;
 
-// Base matcher
 abstract class BaseMatcher
 {
 
-	/**
-	 * The weight to apply to the match.
-	 *
-	 **/
+    /**
+     * The weight to apply to the match.
+     *
+     **/
     protected int $multiplier;
 
 
 
-	/**
-	 * Constructor.
-	 *
-	 **/
+    /**
+     * Constructor.
+     *
+     **/
     public function __construct(int $multiplier)
     {
-        $this -> multiplier = $multiplier;
+        $this->multiplier = $multiplier;
     }
 
 
@@ -34,7 +32,7 @@ abstract class BaseMatcher
     {
         if (method_exists($this, 'formatSearchString')){
             $value = $this->formatSearchString($value);
-		}
+        }
 
         return "IF($field {$this->operator} '$value', {$this->multiplier}, 0)";
     }

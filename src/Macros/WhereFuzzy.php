@@ -1,31 +1,26 @@
 <?php declare(strict_types = 1);
 
-// Namespace
 namespace Quest\Macros;
 
-// Using directives
-use DB;
-use Illuminate\Database\Query\Builder;
-use Illuminate\Database\Query\Expression;
-
-// Matchers
 use Quest\Matchers\ExactMatcher;
+use Illuminate\Support\Facades\DB;
 use Quest\Matchers\AcronymMatcher;
 use Quest\Matchers\InStringMatcher;
 use Quest\Matchers\StudlyCaseMatcher;
+use Illuminate\Database\Query\Builder;
 use Quest\Matchers\StartOfWordsMatcher;
 use Quest\Matchers\StartOfStringMatcher;
 use Quest\Matchers\TimesInStringMatcher;
+use Illuminate\Database\Query\Expression;
 use Quest\Matchers\ConsecutiveCharactersMatcher;
 
-// Where fuzzy macro
 class WhereFuzzy
 {
 
-	/**
-	 * The weights for the pattern matching classes.
-	 *
-	 **/
+    /**
+     * The weights for the pattern matching classes.
+     *
+     **/
     protected static array $matchers = [
         ExactMatcher::class                 => 100,
         StartOfStringMatcher::class         => 50,
@@ -39,24 +34,24 @@ class WhereFuzzy
 
 
 
-	/**
-	 * Construct a fuzzy search expression.
-	 *
-	 **/
-	public static function make(Builder $builder, $field, $value) : Builder
-	{
-		$native = '`' . str_replace('.', '`.`', trim($field, '` ')) . '`';
-		$value  = substr(DB::connection()->getPdo()->quote($value), 1, -1);
+    /**
+     * Construct a fuzzy search expression.
+     *
+     **/
+    public static function make(Builder $builder, $field, $value) : Builder
+    {
+        $native = '`' . str_replace('.', '`.`', trim($field, '` ')) . '`';
+        $value  = substr(DB::connection()->getPdo()->quote($value), 1, -1);
 
-		if (! is_array($builder->columns) || empty($builder->columns)) {
-			$builder->columns = ['*'];
-		}
+        if (! is_array($builder->columns) || empty($builder->columns)) {
+            $builder->columns = ['*'];
+        }
 
-		return $builder
-			 ->addSelect(static::pipeline($field, $native, $value))
-			 ->orderBy('relevance_' . str_replace('.', '_', $field), 'desc')
-			 ->having('relevance_' . str_replace('.', '_', $field), '>', 0);
-	}
+        return $builder
+             ->addSelect(static::pipeline($field, $native, $value))
+             ->orderBy('relevance_' . str_replace('.', '_', $field), 'desc')
+             ->having('relevance_' . str_replace('.', '_', $field), '>', 0);
+    }
 
 
 
@@ -66,11 +61,11 @@ class WhereFuzzy
      **/
     protected static function pipeline($field, $native, $value) : Expression
     {
-		$sql = collect(static::$matchers)->map(fn($multiplier, $matcher) =>
-			(new $matcher($multiplier))->buildQueryString("COALESCE($native, '')", $value)
-		);
+        $sql = collect(static::$matchers)->map(fn($multiplier, $matcher) =>
+            (new $matcher($multiplier))->buildQueryString("COALESCE($native, '')", $value)
+        );
 
-		return DB::raw($sql->implode(' + ') . ' AS relevance_' . str_replace('.', '_', $field));
+        return DB::raw($sql->implode(' + ') . ' AS relevance_' . str_replace('.', '_', $field));
     }
 
 }

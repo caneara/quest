@@ -1,35 +1,33 @@
 <?php declare(strict_types = 1);
 
-// Namespace
 namespace Quest\Matchers;
 
-// Studly case matcher
 class StudlyCaseMatcher extends BaseMatcher
 {
 
     /**
-	 * The operator to use for the WHERE clause.
-	 *
-	 **/
+     * The operator to use for the WHERE clause.
+     *
+     **/
     protected string $operator = 'LIKE BINARY';
 
 
 
     /**
      * The process for building the query string.
-	 *
+     *
      **/
     public function buildQueryString(string $field, string $value) : string
     {
         return "IF(CHAR_LENGTH(TRIM($field)) = CHAR_LENGTH(REPLACE(TRIM($field), ' ', '')) AND " .
-			   "$field {$this->operator} '{$this->formatSearchString($value)}', {$this->multiplier}, 0)";
+               "$field {$this->operator} '{$this->formatSearchString($value)}', {$this->multiplier}, 0)";
     }
 
 
 
     /**
      * Format the given search term.
-	 *
+     *
      **/
     public function formatSearchString(string $value) : string
     {
