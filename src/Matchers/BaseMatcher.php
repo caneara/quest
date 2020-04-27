@@ -30,11 +30,10 @@ abstract class BaseMatcher
      **/
     public function buildQueryString(string $field, string $value) : string
     {
-        if (method_exists($this, 'formatSearchString')){
+        if (method_exists($this, 'formatSearchString')) {
             $value = $this->formatSearchString($value);
         }
 
         return "IF($field {$this->operator} '$value', {$this->multiplier}, 0)";
     }
-
 }

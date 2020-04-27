@@ -19,5 +19,4 @@ class OrderByFuzzy
 
         return $builder;
     }
-
 }

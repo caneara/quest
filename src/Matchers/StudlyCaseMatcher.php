@@ -37,5 +37,4 @@ class StudlyCaseMatcher extends BaseMatcher
 
         return implode('%', $results[0]) . '%';
     }
-
 }

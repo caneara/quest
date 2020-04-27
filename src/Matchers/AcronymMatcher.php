@@ -25,5 +25,4 @@ class AcronymMatcher extends BaseMatcher
 
         return implode('% ', $results[0]) . '%';
     }
-
 }
