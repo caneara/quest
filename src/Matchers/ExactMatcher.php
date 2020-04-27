@@ -10,5 +10,4 @@ class ExactMatcher extends BaseMatcher
      *
      **/
     protected string $operator = '=';
-
 }

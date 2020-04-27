@@ -21,5 +21,4 @@ class InStringMatcher extends BaseMatcher
     {
         return "%$value%";
     }
-
 }

@@ -21,5 +21,4 @@ class StartOfWordsMatcher extends BaseMatcher
     {
         return implode('% ', explode(' ', $value)) . '%';
     }
-
 }

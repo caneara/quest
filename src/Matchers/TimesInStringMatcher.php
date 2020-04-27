@@ -14,5 +14,4 @@ class TimesInStringMatcher extends BaseMatcher
         return "{$this->multiplier} * ROUND((CHAR_LENGTH($field) - CHAR_LENGTH(REPLACE(LOWER($field), " .
                "LOWER('$value'), ''))) / LENGTH('$value'))";
     }
-
 }

@@ -39,5 +39,4 @@ class ConsecutiveCharactersMatcher extends BaseMatcher
 
         return '%' . implode('%', $results[0]) . '%';
     }
-
 }

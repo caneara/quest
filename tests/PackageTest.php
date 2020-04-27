@@ -149,5 +149,4 @@ class PackageTest extends TestCase
         $this->assertCount(1, $results);
         $this->assertEquals('Jane Doe', $results->first()->name);
     }
-
 }

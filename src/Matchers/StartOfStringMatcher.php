@@ -21,5 +21,4 @@ class StartOfStringMatcher extends BaseMatcher
     {
         return "$value%";
     }
-
 }
