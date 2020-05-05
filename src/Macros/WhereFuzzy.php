@@ -62,7 +62,7 @@ class WhereFuzzy
     protected static function pipeline($field, $native, $value) : Expression
     {
         $sql = collect(static::$matchers)->map(
-            fn ($multiplier, $matcher) =>
+            fn($multiplier, $matcher) =>
             (new $matcher($multiplier))->buildQueryString("COALESCE($native, '')", $value)
         );
 
