@@ -48,9 +48,9 @@ class WhereFuzzy
         }
 
         return $builder
-             ->addSelect(static::pipeline($field, $native, $value))
-             ->orderBy('relevance_' . str_replace('.', '_', $field), 'desc')
-             ->having('relevance_' . str_replace('.', '_', $field), '>', 0);
+            ->addSelect(static::pipeline($field, $native, $value))
+            ->orderBy('relevance_' . str_replace('.', '_', $field), 'desc')
+            ->having('relevance_' . str_replace('.', '_', $field), '>', 0);
     }
 
 
