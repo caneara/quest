@@ -53,8 +53,8 @@ class PackageTest extends TestCase
     public function it_can_perform_a_fuzzy_search_and_receive_one_result()
     {
         $results = DB::table('users')
-                 ->whereFuzzy('users.name', 'jad')
-                 ->get();
+            ->whereFuzzy('users.name', 'jad')
+            ->get();
 
         $this->assertCount(1, $results);
         $this->assertEquals('Jane Doe', $results->first()->name);
@@ -66,8 +66,8 @@ class PackageTest extends TestCase
     public function it_can_perform_a_fuzzy_search_and_receive_multiple_results()
     {
         $results = DB::table('users')
-                 ->whereFuzzy('name', 'jd')
-                 ->get();
+            ->whereFuzzy('name', 'jd')
+            ->get();
 
         $this->assertCount(2, $results);
         $this->assertEquals('John Doe', $results[0]->name);
@@ -80,14 +80,14 @@ class PackageTest extends TestCase
     public function it_can_perform_a_fuzzy_search_and_paginate_multiple_results()
     {
         $results = DB::table('users')
-                 ->whereFuzzy('name', 'jd')
-                 ->simplePaginate(1, ['*'], 'page', 1);
+            ->whereFuzzy('name', 'jd')
+            ->simplePaginate(1, ['*'], 'page', 1);
 
         $this->assertEquals('John Doe', $results->items()[0]->name);
 
         $results = DB::table('users')
-                 ->whereFuzzy('name', 'jd')
-                 ->simplePaginate(1, ['*'], 'page', 2);
+            ->whereFuzzy('name', 'jd')
+            ->simplePaginate(1, ['*'], 'page', 2);
 
         $this->assertEquals('Jane Doe', $results->items()[0]->name);
     }
@@ -98,9 +98,9 @@ class PackageTest extends TestCase
     public function it_can_perform_a_fuzzy_search_across_multiple_fields()
     {
         $results = DB::table('users')
-                 ->whereFuzzy('name', 'jd')
-                 ->whereFuzzy('country', 'uk')
-                 ->get();
+            ->whereFuzzy('name', 'jd')
+            ->whereFuzzy('country', 'uk')
+            ->get();
 
         $this->assertCount(1, $results);
         $this->assertEquals('Jane Doe', $results[0]->name);
@@ -112,10 +112,10 @@ class PackageTest extends TestCase
     public function it_can_order_a_fuzzy_search_by_one_field()
     {
         $results = DB::table('users')
-                 ->whereFuzzy('name', 'jd')
-                 ->whereFuzzy('country', 'un')
-                 ->orderByFuzzy('country')
-                 ->get();
+            ->whereFuzzy('name', 'jd')
+            ->whereFuzzy('country', 'un')
+            ->orderByFuzzy('country')
+            ->get();
 
         $this->assertCount(2, $results);
         $this->assertEquals('John Doe', $results[0]->name);
@@ -128,10 +128,10 @@ class PackageTest extends TestCase
     public function it_can_order_a_fuzzy_search_by_multiple_fields()
     {
         $results = DB::table('users')
-                 ->whereFuzzy('name', 'jd')
-                 ->whereFuzzy('country', 'un')
-                 ->orderByFuzzy(['name', 'country'])
-                 ->get();
+            ->whereFuzzy('name', 'jd')
+            ->whereFuzzy('country', 'un')
+            ->orderByFuzzy(['name', 'country'])
+            ->get();
 
         $this->assertCount(2, $results);
         $this->assertEquals('John Doe', $results[0]->name);
@@ -144,7 +144,7 @@ class PackageTest extends TestCase
     public function it_can_perform_an_eloquent_fuzzy_search()
     {
         $results = User::whereFuzzy('name', 'jad')
-                 ->get();
+            ->get();
 
         $this->assertCount(1, $results);
         $this->assertEquals('Jane Doe', $results->first()->name);
