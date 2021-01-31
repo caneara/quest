@@ -40,6 +40,8 @@ class WhereFuzzy
      **/
     public static function make(Builder $builder, $field, $value) : Builder
     {
+        $value  = str_replace(['"', "'", '`'], '', $value);
+        
         $native = '`' . str_replace('.', '`.`', trim($field, '` ')) . '`';
         $value  = substr(DB::connection()->getPdo()->quote($value), 1, -1);
 
