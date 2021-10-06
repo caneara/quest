@@ -18,5 +18,6 @@ class ServiceProvider extends Provider
     {
         Builder::macro('orderByFuzzy', fn($fields) => OrderByFuzzy::make($this, $fields));
         Builder::macro('whereFuzzy', fn($field, $value) => WhereFuzzy::make($this, $field, $value));
+        Builder::macro('orWhereFuzzy', fn($field, $value) => WhereFuzzy::makeOr($this, $field, $value));
     }
 }

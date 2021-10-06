@@ -35,7 +35,7 @@ class WhereFuzzy
 
 
     /**
-     * Construct a fuzzy search expression.
+     * Construct a fuzzy search expression using AND.
      *
      **/
     public static function make(Builder $builder, $field, $value) : Builder
@@ -55,7 +55,26 @@ class WhereFuzzy
             ->having('relevance_' . str_replace('.', '_', $field), '>', 0);
     }
 
+    /**
+     * Construct a fuzzy search expression using OR.
+     *
+     **/
+    public static function makeOr(Builder $builder, $field, $value) : Builder
+    {
+        $value  = str_replace(['"', "'", '`'], '', $value);
 
+        $native = '`' . str_replace('.', '`.`', trim($field, '` ')) . '`';
+        $value  = substr(DB::connection()->getPdo()->quote($value), 1, -1);
+
+        if (! is_array($builder->columns) || empty($builder->columns)) {
+            $builder->columns = ['*'];
+        }
+
+        return $builder
+            ->addSelect(static::pipeline($field, $native, $value))
+            ->orderBy('relevance_' . str_replace('.', '_', $field), 'desc')
+            ->orHaving('relevance_' . str_replace('.', '_', $field), '>', 0);
+    }
 
     /**
      * Execute each of the pattern matching classes to generate the required SQL.
