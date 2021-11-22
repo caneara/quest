@@ -4,7 +4,6 @@ namespace Quest\Matchers;
 
 class TimesInStringMatcher extends BaseMatcher
 {
-
     /**
      * The process for building the query string.
      *

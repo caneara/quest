@@ -4,14 +4,11 @@ namespace Quest\Matchers;
 
 class InStringMatcher extends BaseMatcher
 {
-
     /**
      * The operator to use for the WHERE clause.
      *
      **/
     protected string $operator = 'LIKE';
-
-
 
     /**
      * Format the given search term.

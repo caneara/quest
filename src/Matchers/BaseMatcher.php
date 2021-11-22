@@ -4,14 +4,11 @@ namespace Quest\Matchers;
 
 abstract class BaseMatcher
 {
-
     /**
      * The weight to apply to the match.
      *
      **/
     protected int $multiplier;
-
-
 
     /**
      * Constructor.
@@ -21,8 +18,6 @@ abstract class BaseMatcher
     {
         $this->multiplier = $multiplier;
     }
-
-
 
     /**
      * The default process for building the query string.

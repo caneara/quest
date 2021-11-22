@@ -6,7 +6,6 @@ use Illuminate\Database\Query\Builder;
 
 class OrderByFuzzy
 {
-
     /**
      * Construct a fuzzy search expression.
      *

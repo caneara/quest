@@ -8,7 +8,6 @@ use Illuminate\Support\Facades\DB;
 
 class PackageTest extends TestCase
 {
-
     /**
      * Setup the test environment.
      *
@@ -17,8 +16,7 @@ class PackageTest extends TestCase
     {
         parent::setUp();
 
-        app()['config']->set('database.default', 'mysql');
-        $dbSetup = [
+        $setup = [
             'driver'         => 'mysql',
             'url'            => env('DATABASE_URL'),
             'host'           => env('DB_HOST', '127.0.0.1'),
@@ -34,7 +32,9 @@ class PackageTest extends TestCase
             'strict'         => true,
             'engine'         => null,
         ];
-        app()['config']->set('database.connections.mysql', $dbSetup);
+
+        app()['config']->set('database.default', 'mysql');
+        app()['config']->set('database.connections.mysql', $setup);
 
         (new ServiceProvider(app()))->boot();
 
@@ -48,7 +48,6 @@ class PackageTest extends TestCase
         DB::table('users')->insert(['name' => 'William Doe', 'nickname' => 'willy', 'country' => 'Italy']);
     }
 
-
     /** @test */
     public function it_can_perform_a_fuzzy_search_and_receive_one_result()
     {
@@ -59,7 +58,6 @@ class PackageTest extends TestCase
         $this->assertCount(1, $results);
         $this->assertEquals('Jane Doe', $results->first()->name);
     }
-
 
     /** @test */
     public function it_can_perform_a_fuzzy_search_and_receive_multiple_results()
@@ -72,7 +70,6 @@ class PackageTest extends TestCase
         $this->assertEquals('John Doe', $results[0]->name);
         $this->assertEquals('Jane Doe', $results[1]->name);
     }
-
 
     /** @test */
     public function it_can_perform_a_fuzzy_search_and_paginate_multiple_results()
@@ -90,7 +87,6 @@ class PackageTest extends TestCase
         $this->assertEquals('Jane Doe', $results->items()[0]->name);
     }
 
-
     /** @test */
     public function it_can_perform_a_fuzzy_search_across_multiple_fields()
     {
@@ -102,7 +98,6 @@ class PackageTest extends TestCase
         $this->assertCount(1, $results);
         $this->assertEquals('Jane Doe', $results[0]->name);
     }
-
 
     /** @test */
     public function it_can_order_a_fuzzy_search_by_one_field()
@@ -118,7 +113,6 @@ class PackageTest extends TestCase
         $this->assertEquals('Jane Doe', $results[1]->name);
     }
 
-
     /** @test */
     public function it_can_order_a_fuzzy_search_by_multiple_fields()
     {
@@ -133,7 +127,6 @@ class PackageTest extends TestCase
         $this->assertEquals('Jane Doe', $results[1]->name);
     }
 
-
     /** @test */
     public function it_can_perform_an_eloquent_fuzzy_search()
     {
@@ -147,7 +140,7 @@ class PackageTest extends TestCase
     /** @test */
     public function it_can_perform_an_eloquent_fuzzy_or_search()
     {
-        $results = User::whereFuzzy(function ($query) {
+        $results = User::whereFuzzy(function($query) {
             $query->orWhereFuzzy('name', 'jndoe');
             $query->orWhereFuzzy('nickname', 'jndoe');
         })
@@ -155,10 +148,11 @@ class PackageTest extends TestCase
 
         $this->assertEquals('John Doe', $results->first()->name);
     }
+
     /** @test */
     public function it_can_perform_an_eloquent_fuzzy_or_search_with_order()
     {
-        $results = User::whereFuzzy(function ($query) {
+        $results = User::whereFuzzy(function($query) {
             $query->orWhereFuzzy('name', 'jad');
             $query->orWhereFuzzy('nickname', 'jndoe');
         })
@@ -171,7 +165,7 @@ class PackageTest extends TestCase
     /** @test */
     public function it_can_perform_an_eloquent_fuzzy_and_search_with_fuzzy_order()
     {
-        $results = User::whereFuzzy(function ($query) {
+        $results = User::whereFuzzy(function($query) {
             $query->whereFuzzy('name', 'jad');
             $query->whereFuzzy('nickname', 'jndoe');
         })
