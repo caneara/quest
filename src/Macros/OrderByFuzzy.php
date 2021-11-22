@@ -14,7 +14,7 @@ class OrderByFuzzy
     public static function make(Builder $builder, $fields) : Builder
     {
         foreach ((array) $fields as $field) {
-            $builder->orderBy('relevance_' . str_replace('.', '_', $field), 'desc');
+            $builder->orderBy('fuzzy_relevance_' . str_replace('.', '_', $field), 'desc');
         }
 
         return $builder;

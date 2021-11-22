@@ -1,4 +1,4 @@
-<?php declare(strict_types = 1);
+<?php declare(strict_types=1);
 
 namespace Quest\Tests;
 
@@ -13,12 +13,12 @@ class PackageTest extends TestCase
      * Setup the test environment.
      *
      **/
-    protected function setUp() : void
+    protected function setUp(): void
     {
         parent::setUp();
 
         app()['config']->set('database.default', 'mysql');
-        app()['config']->set('database.connections.mysql', [
+        $dbSetup = [
             'driver'         => 'mysql',
             'url'            => env('DATABASE_URL'),
             'host'           => env('DB_HOST', '127.0.0.1'),
@@ -33,7 +33,8 @@ class PackageTest extends TestCase
             'prefix_indexes' => true,
             'strict'         => true,
             'engine'         => null,
-        ]);
+        ];
+        app()['config']->set('database.connections.mysql', $dbSetup);
 
         (new ServiceProvider(app()))->boot();
 
@@ -41,12 +42,11 @@ class PackageTest extends TestCase
 
         DB::table('users')->truncate();
 
-        DB::table('users')->insert(['name' => 'John Doe', 'country' => 'United States']);
-        DB::table('users')->insert(['name' => 'Jane Doe', 'country' => 'United Kingdom']);
-        DB::table('users')->insert(['name' => 'Fred Doe', 'country' => 'France']);
-        DB::table('users')->insert(['name' => 'William Doe', 'country' => 'Italy']);
+        DB::table('users')->insert(['name' => 'John Doe', 'nickname' => 'jndoe', 'country' => 'United States']);
+        DB::table('users')->insert(['name' => 'Jane Doe', 'nickname' => 'jndoe', 'country' => 'United Kingdom']);
+        DB::table('users')->insert(['name' => 'Fred Doe', 'nickname' => 'fredrick', 'country' => 'France']);
+        DB::table('users')->insert(['name' => 'William Doe', 'nickname' => 'willy', 'country' => 'Italy']);
     }
-
 
 
     /** @test */
@@ -61,7 +61,6 @@ class PackageTest extends TestCase
     }
 
 
-
     /** @test */
     public function it_can_perform_a_fuzzy_search_and_receive_multiple_results()
     {
@@ -73,7 +72,6 @@ class PackageTest extends TestCase
         $this->assertEquals('John Doe', $results[0]->name);
         $this->assertEquals('Jane Doe', $results[1]->name);
     }
-
 
 
     /** @test */
@@ -93,7 +91,6 @@ class PackageTest extends TestCase
     }
 
 
-
     /** @test */
     public function it_can_perform_a_fuzzy_search_across_multiple_fields()
     {
@@ -105,7 +102,6 @@ class PackageTest extends TestCase
         $this->assertCount(1, $results);
         $this->assertEquals('Jane Doe', $results[0]->name);
     }
-
 
 
     /** @test */
@@ -123,7 +119,6 @@ class PackageTest extends TestCase
     }
 
 
-
     /** @test */
     public function it_can_order_a_fuzzy_search_by_multiple_fields()
     {
@@ -139,7 +134,6 @@ class PackageTest extends TestCase
     }
 
 
-
     /** @test */
     public function it_can_perform_an_eloquent_fuzzy_search()
     {
@@ -147,6 +141,43 @@ class PackageTest extends TestCase
             ->get();
 
         $this->assertCount(1, $results);
+        $this->assertEquals('Jane Doe', $results->first()->name);
+    }
+
+    /** @test */
+    public function it_can_perform_an_eloquent_fuzzy_or_search()
+    {
+        $results = User::whereFuzzy(function ($query) {
+            $query->orWhereFuzzy('name', 'jndoe');
+            $query->orWhereFuzzy('nickname', 'jndoe');
+        })
+            ->get();
+
+        $this->assertEquals('John Doe', $results->first()->name);
+    }
+    /** @test */
+    public function it_can_perform_an_eloquent_fuzzy_or_search_with_order()
+    {
+        $results = User::whereFuzzy(function ($query) {
+            $query->orWhereFuzzy('name', 'jad');
+            $query->orWhereFuzzy('nickname', 'jndoe');
+        })
+            ->orderByFuzzy('name')
+            ->get();
+
+        $this->assertEquals('Jane Doe', $results->first()->name);
+    }
+
+    /** @test */
+    public function it_can_perform_an_eloquent_fuzzy_and_search_with_fuzzy_order()
+    {
+        $results = User::whereFuzzy(function ($query) {
+            $query->whereFuzzy('name', 'jad');
+            $query->whereFuzzy('nickname', 'jndoe');
+        })
+            ->orderByFuzzy('name')
+            ->get();
+
         $this->assertEquals('Jane Doe', $results->first()->name);
     }
 }
