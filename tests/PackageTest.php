@@ -178,13 +178,13 @@ class PackageTest extends TestCase
     /** @test */
     public function it_can_limit_minimum_score()
     {
-        $results = User::whereFuzzy('name', 'john Do')
+        $results = User::whereFuzzy('name', 'joh Do')
             ->atLeastFuzzy(70)
             ->get();
 
         $this->assertEquals('John Doe', $results->first()->name);
 
-        $results = User::whereFuzzy('name', 'john Do')
+        $results = User::whereFuzzy('name', 'joh Do')
             ->atLeastFuzzy(95)
             ->get();
 
