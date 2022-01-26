@@ -89,6 +89,23 @@ User::whereFuzzy('name', 'jd')
     ->orderBy('relevance_email', 'desc')
     ->first();
 ```
+### Setting Minimum Match Threshold
+
+When using quest an overall score will be assigned to each row `_fuzzy_relevance_` with a range of 0-100.
+
+You can enforce a minimum match standard and limit results returned by using `->atLeastFuzzy()`
+
+```php
+User::whereFuzzy('name', 'jd')
+    ->atLeastFuzzy(70)
+    ->first();
+
+// Equivalent to:
+
+User::whereFuzzy('name', 'jd')
+    ->having('_fuzzy_relevance_', '>',  70)
+    ->first();
+```
 
 ## Limitations
 
