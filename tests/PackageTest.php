@@ -174,4 +174,20 @@ class PackageTest extends TestCase
 
         $this->assertEquals('Jane Doe', $results->first()->name);
     }
+
+    /** @test */
+    public function it_can_limit_minimum_score()
+    {
+        $results = User::whereFuzzy('name', 'joh Do')
+            ->atLeastFuzzy(65)
+            ->get();
+
+        $this->assertEquals('John Doe', $results->first()->name);
+
+        $results = User::whereFuzzy('name', 'joh Do')
+            ->atLeastFuzzy(70)
+            ->get();
+
+        $this->assertCount(0, $results);
+    }
 }

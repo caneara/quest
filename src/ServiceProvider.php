@@ -3,6 +3,7 @@
 namespace Quest;
 
 use Closure;
+use Quest\Macros\AtLeast;
 use Quest\Macros\WhereFuzzy;
 use Quest\Macros\OrderByFuzzy;
 use Illuminate\Database\Query\Builder;
@@ -40,5 +41,7 @@ class ServiceProvider extends Provider
 
             return WhereFuzzy::makeOr($this, $field, $value);
         });
+
+        Builder::macro('atLeastFuzzy', fn($minScore) => AtLeast::make($this, $minScore));
     }
 }
