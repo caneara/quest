@@ -13,6 +13,7 @@ class AtLeast
     public static function make(Builder $builder, int $minScore) : Builder
     {
         $builder->having('_fuzzy_relevance_', '>',  $minScore);
+
         return $builder;
     }
 }
