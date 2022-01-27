@@ -5,8 +5,6 @@
 
 <!-- Badges -->
 <p align="center">
-  <img src="resources/build.svg" alt="Build">
-  <img src="resources/coverage.svg" alt="Coverage">
   <img src="resources/version.svg" alt="Version">
   <img src="resources/license.svg" alt="License">
 </p>
