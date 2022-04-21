@@ -32,14 +32,14 @@ class ServiceProvider extends Provider
             return WhereFuzzy::make($this, $field, $value);
         });
 
-        Builder::macro('orWhereFuzzy', function($field, $value = null) {
+        Builder::macro('orWhereFuzzy', function($field, $value = null, $relevance = 0) {
             if ($field instanceof Closure) {
                 $field($this);
 
                 return $this;
             }
 
-            return WhereFuzzy::makeOr($this, $field, $value);
+            return WhereFuzzy::makeOr($this, $field, $value, $relevance);
         });
 
         Builder::macro('withMinimumRelevance', fn($score) => withMinimumRelevance::make($this, $score));

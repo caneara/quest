@@ -57,7 +57,7 @@ class WhereFuzzy
      * Construct a fuzzy OR search expression.
      *
      **/
-    public static function makeOr(Builder $builder, $field, $value): Builder
+    public static function makeOr(Builder $builder, $field, $value, $relevance): Builder
     {
         $value       = static::escapeValue($value);
         $nativeField = '`' . str_replace('.', '`.`', trim($field, '` ')) . '`';
@@ -68,7 +68,7 @@ class WhereFuzzy
 
         $builder
             ->addSelect([static::pipeline($field, $nativeField, $value)])
-            ->orHaving('fuzzy_relevance_' . str_replace('.', '_', $field), '>', 0);
+            ->orHaving('fuzzy_relevance_' . str_replace('.', '_', $field), '>', $relevance);
 
         static::calculateTotalRelevanceColumn($builder);
 

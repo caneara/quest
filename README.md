@@ -48,6 +48,14 @@ User::whereFuzzy('name', 'jd')  // matches John Doe
     ->first();
 ```
 
+You can also perform searched across multiple columns using `orWhereFuzzy` method calls:
+```php
+User::whereFuzzy(function ($query) {
+    $query->orWhereFuzzy('name', 'jd'); // matches John Doe
+    $query->orWhereFuzzy('email', 'gm'); // matches @gmail.com
+})->first();
+```
+
 ### Ordering results
 
 When using Quest, a `'relevance_*'` column will be included in your search results. The `*` is a wildcard that will be replaced with the name of the field that you are searching on e.g.
@@ -103,6 +111,16 @@ User::whereFuzzy('name', 'jd')
 User::whereFuzzy('name', 'jd')
     ->withMinimumRelevance(70)
     ->first();
+```
+
+When using `orWhereFuzzy` include the minimum relevance as an optional third parameter
+
+```php
+// Returns results which exceed 70 on the name column or 90 on the email column
+User::whereFuzzy(function ($query) {
+    $query->orWhereFuzzy('name', 'jd', 70);
+    $query->orWhereFuzzy('email', 'gm', 90);
+})->get();
 ```
 
 ## Limitations
