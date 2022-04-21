@@ -163,6 +163,20 @@ class PackageTest extends TestCase
     }
 
     /** @test */
+    public function it_can_perform_an_eloquent_fuzzy_or_search_with_relevance()
+    {
+        $results = User::whereFuzzy(function($query) {
+            $query->orWhereFuzzy('name', 'ed', 30); // Jane Doe has a relevance of 11
+            $query->orWhereFuzzy('country', 'Italy', 10);
+        })
+            ->get();
+
+        $this->assertCount(2, $results);
+        $this->assertEquals('William Doe', $results[0]->name);
+        $this->assertEquals('Fred Doe', $results[1]->name);
+    }
+
+    /** @test */
     public function it_can_perform_an_eloquent_fuzzy_and_search_with_fuzzy_order()
     {
         $results = User::whereFuzzy(function($query) {
