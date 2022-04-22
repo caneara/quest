@@ -48,7 +48,7 @@ User::whereFuzzy('name', 'jd')  // matches John Doe
     ->first();
 ```
 
-You can also perform searched across multiple columns using `orWhereFuzzy` method calls:
+You can also perform searches across multiple columns using `orWhereFuzzy` method calls:
 ```php
 User::whereFuzzy(function ($query) {
     $query->orWhereFuzzy('name', 'jd'); // matches John Doe
