@@ -69,10 +69,10 @@ User::whereFuzzy(function ($query) {
 
 ### Ordering results
 
-When using Quest, a `'relevance_*'` column will be included in your search results. The `*` is a wildcard that will be replaced with the name of the field that you are searching on e.g.
+When using Quest, a `'fuzzy_relevance_*'` column will be included in your search results. The `*` is a wildcard that will be replaced with the name of the field that you are searching on e.g.
 
 ```php
-User::whereFuzzy('email', 'gm') // relevance_email
+User::whereFuzzy('email', 'gm') // fuzzy_relevance_email
 ```
 
 This column contains the score that the record received after each of the fuzzy-searching pattern matchers were applied to it. The higher the score, the more closely the record matches the search term.
@@ -87,7 +87,7 @@ User::whereFuzzy('name', 'jd')
 // Equivalent to:
 
 User::whereFuzzy('name', 'jd')
-    ->orderBy('relevance_name', 'desc')
+    ->orderBy('fuzzy_relevance_name', 'desc')
     ->first();
 ```
 
@@ -102,8 +102,8 @@ User::whereFuzzy('name', 'jd')
 // Equivalent to:
 
 User::whereFuzzy('name', 'jd')
-    ->orderBy('relevance_name', 'desc')
-    ->orderBy('relevance_email', 'desc')
+    ->orderBy('fuzzy_relevance_name', 'desc')
+    ->orderBy('fuzzy_relevance_email', 'desc')
     ->first();
 ```
 ### Applying a minimum threshold
