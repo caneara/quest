@@ -23,17 +23,6 @@ Pull in the package using composer
 composer require mattkingshott/quest
 ```
 
-## Promo
-
-[Lumeno](https://lumeno.dev) centralizes your IT profile (résumé, project portfolio and written articles) so that employers can discover, and invite you to apply for jobs that match your personal requirements, such as tech skills, minimum salary, availability, location, commute distance, and much more... [sign up for free!](https://lumeno.dev)
-
-<!-- Screenshot -->
-<p align="center">
-    <a target="_blank" href="https://lumeno.dev">
-        <img src="resources/banner.png" alt="Lumeno" style="max-height: 170px">
-    </a>
-</p>
-
 ## Usage
 
 Quest automatically registers a service provider containing several macros. These macros are then attached to the underlying `Illuminate\Database\Query\Builder` class.
