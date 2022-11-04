@@ -17,7 +17,7 @@ class ServiceProvider extends Provider
      **/
     public function boot(): void
     {
-        Builder::macro('orderByFuzzy', fn($fields) => OrderByFuzzy::make($this, $fields));
+        Builder::macro('orderByFuzzy', fn ($fields) => OrderByFuzzy::make($this, $fields));
 
         Builder::macro('whereFuzzy', function($field, $value = null) {
             // check if first param is a closure and execute it if it is, passing the current builder as parameter
@@ -42,6 +42,6 @@ class ServiceProvider extends Provider
             return WhereFuzzy::makeOr($this, $field, $value, $relevance);
         });
 
-        Builder::macro('withMinimumRelevance', fn($score) => withMinimumRelevance::make($this, $score));
+        Builder::macro('withMinimumRelevance', fn ($score) => withMinimumRelevance::make($this, $score));
     }
 }

@@ -164,7 +164,7 @@ class WhereFuzzy
     protected static function pipeline($field, $native, $value): Expression
     {
         $sql = collect(static::$matchers)->map(
-            fn($multiplier, $matcher) => (new $matcher($multiplier))->buildQueryString("COALESCE($native, '')", $value)
+            fn ($multiplier, $matcher) => (new $matcher($multiplier))->buildQueryString("COALESCE($native, '')", $value)
         );
 
         return DB::raw($sql->implode(' + ') . ' AS fuzzy_relevance_' . str_replace('.', '_', $field));
