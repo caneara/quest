@@ -9,7 +9,7 @@ Much of this library is based on the fantastic work of Tom Lingham for the now a
 Pull in the package using composer
 
 ```bash
-composer require mattkingshott/quest
+composer require caneara/quest
 ```
 
 ## Usage
