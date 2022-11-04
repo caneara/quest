@@ -1,8 +1,3 @@
-<!-- Screenshot -->
-<p align="center">
-    <img src="resources/example.png" alt="Code example">
-</p>
-
 # Quest
 
 This package enables pseudo fuzzy-searching within Laravel database and Eloquent queries. Due to its pattern matching methods, it only supports **MySQL** or **MariaDB**, though I welcome any PRs to enable support for databases like Postgres.
