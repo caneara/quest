@@ -86,7 +86,9 @@ User::whereFuzzy('name', 'jd')
 ```
 ### Applying a minimum threshold
 
-When using Quest, an overall score will be assigned to each record within the `_fuzzy_relevance_` column. This score is represented as an `integer` between 0 and 100.
+When using Quest, an overall score will be assigned to each record within the `_fuzzy_relevance_` column. This score is represented as an `integer` between 0 and 295.
+
+> Note that the `fuzzy_relevance` score is not divided by the number of columns. Therefore, it could be up to, for example, 590 if two fields match exactly.
 
 You can enforce a minimum score to restrict the results by using the `withMinimumRelevance()` method. Setting a higher score will return fewer, but likely more-relevant results.
 
