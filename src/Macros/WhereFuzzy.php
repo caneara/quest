@@ -92,15 +92,15 @@ class WhereFuzzy
             // search for fuzzy_relevance_* columns and _fuzzy_relevance_ position
             foreach ($builder->columns as $as => $column) {
                 if ($column instanceof Expression) {
-                    if (stripos($column->getValue(), 'AS fuzzy_relevance_')) {
+                    if (stripos($column->getValue(DB::getQueryGrammar()), 'AS fuzzy_relevance_')) {
                         $matches = [];
 
-                        preg_match('/AS (fuzzy_relevance_.*)$/', $column->getValue(), $matches);
+                        preg_match('/AS (fuzzy_relevance_.*)$/', $column->getValue(DB::getQueryGrammar()), $matches);
 
                         if (! empty($matches[1])) {
                             $existingRelevanceColumns[$as] = $matches[1];
                         }
-                    } elseif (stripos($column->getValue(), 'AS _fuzzy_relevance_')) {
+                    } elseif (stripos($column->getValue(DB::getQueryGrammar()), 'AS _fuzzy_relevance_')) {
                         $sumColumnIdx = $as;
                     }
                 }
@@ -112,7 +112,7 @@ class WhereFuzzy
             foreach ($existingRelevanceColumns as $as => $column) {
                 $relevanceTotalColumn .= (! empty($relevanceTotalColumn) ? ' + ' : '')
                     . '('
-                    . str_ireplace(' AS ' . $column, '', $builder->columns[$as]->getValue())
+                    . str_ireplace(' AS ' . $column, '', $builder->columns[$as]->getValue(DB::getQueryGrammar()))
                     . ')';
             }
 
