@@ -46,7 +46,7 @@ class WhereFuzzy
 
         $builder
             ->addSelect([static::pipeline($field, $nativeField, $value)])
-            ->having('fuzzy_relevance_' . str_replace('.', '_', $field), '>', 0);
+            //->having('fuzzy_relevance_' . str_replace('.', '_', $field), '>', 0);
 
         static::calculateTotalRelevanceColumn($builder);
 
@@ -126,6 +126,7 @@ class WhereFuzzy
                 $builder->columns[$sumColumnIdx] = new Expression($relevanceTotalColumn);
             }
 
+/*
             // only add the _fuzzy_relevance_ ORDER once
             if (
                 ! $builder->orders
@@ -139,7 +140,7 @@ class WhereFuzzy
             ) {
                 $builder->orderBy('_fuzzy_relevance_', 'desc');
             }
-
+*/
             return true;
         }
 
