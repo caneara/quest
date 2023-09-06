@@ -18,7 +18,7 @@ class ServiceProvider extends Provider
     public function boot(): void
     {
         $this->publishes([
-            __DIR__ . '/config/caneara-quest.config' => config_path('caneara-quest.config'),
+            __DIR__ . '/config/caneara-quest.php' => config_path('caneara-quest.php'),
         ], 'caneara-quest');
         
         Builder::macro('orderByFuzzy', fn ($fields) => OrderByFuzzy::make($this, $fields));
