@@ -1,5 +1,5 @@
 {
-    "name": "caneara-quest",
+    "name": "caneara/quest",
     "description": "A package that provides pseudo fuzzy-searching to Laravel database queries.",
     "keywords": [
         "quest",
@@ -38,5 +38,5 @@
     "scripts": {
         "test": "vendor/bin/phpunit"
     },
-    "minimum-stability": "dev"
+    "minimum-stability": "stable"
 }
