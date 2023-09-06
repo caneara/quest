@@ -37,6 +37,8 @@ class WhereFuzzy
      **/
     public static function make(Builder $builder, $field, $value): Builder
     {
+        $enableRelevanceHavingClause = config('caneara-quest.enable-relevance-having-clause');
+
         $value       = static::escapeValue($value);
         $nativeField = '`' . str_replace('.', '`.`', trim($field, '` ')) . '`';
 
@@ -44,9 +46,12 @@ class WhereFuzzy
             $builder->columns = ['*'];
         }
 
-        $builder
-            ->addSelect([static::pipeline($field, $nativeField, $value)])
-            //->having('fuzzy_relevance_' . str_replace('.', '_', $field), '>', 0);
+        $builder->addSelect([static::pipeline($field, $nativeField, $value)]);
+
+        if($enableRelevanceHavingClause) {
+            $builder->having('fuzzy_relevance_' . str_replace('.', '_', $field), '>', 0);
+        }
+
 
         static::calculateTotalRelevanceColumn($builder);
 
@@ -59,6 +64,8 @@ class WhereFuzzy
      **/
     public static function makeOr(Builder $builder, $field, $value, $relevance): Builder
     {
+        $enableRelevanceHavingClause = config('caneara-quest.enable-relevance-having-clause');
+
         $value       = static::escapeValue($value);
         $nativeField = '`' . str_replace('.', '`.`', trim($field, '` ')) . '`';
 
@@ -66,9 +73,11 @@ class WhereFuzzy
             $builder->columns = ['*'];
         }
 
-        $builder
-            ->addSelect([static::pipeline($field, $nativeField, $value)])
-            ->orHaving('fuzzy_relevance_' . str_replace('.', '_', $field), '>', $relevance);
+        $builder->addSelect([static::pipeline($field, $nativeField, $value)]);
+
+        if($enableRelevanceHavingClause) {
+            $builder->orHaving('fuzzy_relevance_' . str_replace('.', '_', $field), '>', $relevance);
+        }
 
         static::calculateTotalRelevanceColumn($builder);
 
@@ -85,6 +94,8 @@ class WhereFuzzy
      */
     protected static function calculateTotalRelevanceColumn($builder): bool
     {
+        $enableRelevanceSort = config('caneara-quest.enable-sort');
+
         if (! empty($builder->columns)) {
             $existingRelevanceColumns = [];
             $sumColumnIdx             = null;
@@ -127,20 +138,21 @@ class WhereFuzzy
             }
 
             // only add the _fuzzy_relevance_ ORDER once
-            /*
-            if (
-                ! $builder->orders
-                || (
-                    $builder->orders
-                    && array_search(
-                        '_fuzzy_relevance_',
-                        array_column($builder->orders, 'column')
-                    ) === false
-                )
-            ) {
-                $builder->orderBy('_fuzzy_relevance_', 'desc');
+            if($enableRelevanceSort) {
+                if (
+                    ! $builder->orders
+                    || (
+                        $builder->orders
+                        && array_search(
+                            '_fuzzy_relevance_',
+                            array_column($builder->orders, 'column')
+                        ) === false
+                    )
+                ) {
+                    $builder->orderBy('_fuzzy_relevance_', 'desc');
+                }
             }
-            */
+
             return true;
         }
 
