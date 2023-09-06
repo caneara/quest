@@ -17,9 +17,6 @@ class ServiceProvider extends Provider
      **/
     public function boot(): void
     {
-        dump('-----------------------');
-        dump(__DIR__);
-        dump(config_path('caneara-quest.php'));
         if ($this->app->runningInConsole()) {
             $this->publishes([
                 __DIR__.'/config/caneara-quest.php' => config_path('caneara-quest.php'),
