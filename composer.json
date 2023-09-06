@@ -1,5 +1,5 @@
 {
-    "name": "caneara/quest",
+    "name": "caneara-quest",
     "description": "A package that provides pseudo fuzzy-searching to Laravel database queries.",
     "keywords": [
         "quest",
