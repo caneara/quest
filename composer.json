@@ -1,5 +1,5 @@
 {
-    "name": "caneara/quest",
+    "name": "bisnow/caneara-quest",
     "description": "A package that provides pseudo fuzzy-searching to Laravel database queries.",
     "keywords": [
         "quest",
@@ -10,7 +10,7 @@
     ],
     "type": "library",
     "license": "MIT",
-    "homepage": "https://github.com/caneara/quest",
+    "homepage": "https://github.com/bisnow/caneara-quest",
     "autoload": {
         "psr-4": {
             "Quest\\": "src"
