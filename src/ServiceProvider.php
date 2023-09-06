@@ -22,7 +22,7 @@ class ServiceProvider extends Provider
         dump(config_path('caneara-quest.php'));
         if ($this->app->runningInConsole()) {
             $this->publishes([
-                __DIR__.'/../config/caneara-quest.php' => config_path('caneara-quest.php'),
+                __DIR__.'/config/caneara-quest.php' => config_path('caneara-quest.php'),
             ], 'telescope-config');
         }
 
