@@ -2,6 +2,7 @@
 
 namespace Quest\Tests;
 
+use Illuminate\Support\Facades\Config;
 use Quest\ServiceProvider;
 use Orchestra\Testbench\TestCase;
 use Illuminate\Support\Facades\DB;
@@ -23,7 +24,7 @@ class PackageTest extends TestCase
             'port'           => env('DB_PORT', 3306),
             'database'       => env('DB_DATABASE', 'testing'),
             'username'       => env('DB_USERNAME', 'root'),
-            'password'       => env('DB_PASSWORD', ''),
+            'password'       => env('DB_PASSWORD', 'root'),
             'unix_socket'    => env('DB_SOCKET', ''),
             'charset'        => 'utf8mb4',
             'collation'      => 'utf8mb4_unicode_520_ci',
@@ -203,5 +204,59 @@ class PackageTest extends TestCase
             ->get();
 
         $this->assertCount(0, $results);
+    }
+
+    /** @test */
+    public function it_can_perform_an_eloquent_fuzzy_and_search_with_enabled_fuzzy_order()
+    {
+        Config::set('caneara-quest.enable-sort', true);
+
+        $results = User::whereFuzzy(function($query) {
+            $query->whereFuzzy('name', 'jad');
+            $query->whereFuzzy('name', 'William Doe');
+
+        });
+
+        $this->assertStringContainsString('order by', $results->toSql());
+    }
+
+    /** @test */
+    public function it_can_perform_an_eloquent_fuzzy_and_search_with_disabled_fuzzy_order()
+    {
+        Config::set('caneara-quest.enable-sort', false);
+
+        $results = User::whereFuzzy(function($query) {
+            $query->whereFuzzy('name', 'jad');
+            $query->whereFuzzy('name', 'wp');
+
+        });
+
+        $this->assertStringNotContainsString('order by', $results->toSql());
+    }
+
+    /** @test */
+    public function it_can_perform_an_eloquent_fuzzy_and_search_with_enabled_having_clause()
+    {
+        Config::set('caneara-quest.enable-relevance-having-clause', true);
+
+        $results = User::whereFuzzy(function($query) {
+            $query->whereFuzzy('name', 'jad');
+            $query->whereFuzzy('name', 'William Doe');
+        });
+
+        $this->assertStringContainsString('having', $results->toSql());
+    }
+
+    /** @test */
+    public function it_can_perform_an_eloquent_fuzzy_and_search_with_disabled_having_clause()
+    {
+        Config::set('caneara-quest.enable-relevance-having-clause', false);
+
+        $results = User::whereFuzzy(function($query) {
+            $query->whereFuzzy('name', 'jad');
+            $query->whereFuzzy('name', 'William Doe');
+        });
+
+        $this->assertStringNotContainsString('having', $results->toSql());
     }
 }
