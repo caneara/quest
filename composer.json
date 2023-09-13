@@ -38,5 +38,5 @@
     "scripts": {
         "test": "vendor/bin/phpunit"
     },
-    "minimum-stability": "stable"   
+    "minimum-stability": "stable"
 }
