@@ -37,7 +37,7 @@ class WhereFuzzy
      **/
     public static function make(Builder $builder, $field, $value): Builder
     {
-        $enableRelevanceHavingClause = config('caneara-quest.enable-relevance-having-clause');
+        $matchOnly = config('quest.sort-and-return-matches');
 
         $value       = static::escapeValue($value);
         $nativeField = '`' . str_replace('.', '`.`', trim($field, '` ')) . '`';
@@ -48,7 +48,7 @@ class WhereFuzzy
 
         $builder
             ->addSelect([static::pipeline($field, $nativeField, $value)])
-            ->when($enableRelevanceHavingClause, function (Builder $query) use($field) {
+            ->when($matchOnly, function (Builder $query) use($field) {
                 $query->having('fuzzy_relevance_' . str_replace('.', '_', $field), '>', 0);
             });
 
@@ -63,7 +63,7 @@ class WhereFuzzy
      **/
     public static function makeOr(Builder $builder, $field, $value, $relevance): Builder
     {
-        $enableRelevanceHavingClause = config('caneara-quest.enable-relevance-having-clause');
+        $matchOnly = config('quest.sort-and-return-matches');
 
         $value       = static::escapeValue($value);
         $nativeField = '`' . str_replace('.', '`.`', trim($field, '` ')) . '`';
@@ -73,7 +73,7 @@ class WhereFuzzy
         }
 
         $builder->addSelect([static::pipeline($field, $nativeField, $value)])
-            ->when($enableRelevanceHavingClause, function (Builder $query) use($field, $relevance) {
+            ->when($matchOnly, function (Builder $query) use($field, $relevance) {
                 $query->orHaving('fuzzy_relevance_' . str_replace('.', '_', $field), '>', $relevance);
             });
 
@@ -92,7 +92,7 @@ class WhereFuzzy
      */
     protected static function calculateTotalRelevanceColumn($builder): bool
     {
-        $enableRelevanceSort = config('caneara-quest.enable-sort');
+        $matchOnly = config('quest.sort-and-return-matches');
 
         if (! empty($builder->columns)) {
             $existingRelevanceColumns = [];
@@ -146,7 +146,7 @@ class WhereFuzzy
                     ) === false
                 )
             ) {
-                $builder->when($enableRelevanceSort, function (Builder $query) {
+                $builder->when($matchOnly, function (Builder $query) {
                     $query->orderBy('_fuzzy_relevance_', 'desc');;
                 });
             }
