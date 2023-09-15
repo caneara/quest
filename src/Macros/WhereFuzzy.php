@@ -46,12 +46,11 @@ class WhereFuzzy
             $builder->columns = ['*'];
         }
 
-        $builder->addSelect([static::pipeline($field, $nativeField, $value)]);
-
-        if($enableRelevanceHavingClause) {
-            $builder->having('fuzzy_relevance_' . str_replace('.', '_', $field), '>', 0);
-        }
-
+        $builder
+            ->addSelect([static::pipeline($field, $nativeField, $value)])
+            ->when($enableRelevanceHavingClause, function (Builder $query) use($field) {
+                $query->having('fuzzy_relevance_' . str_replace('.', '_', $field), '>', 0);
+            });
 
         static::calculateTotalRelevanceColumn($builder);
 
@@ -73,11 +72,10 @@ class WhereFuzzy
             $builder->columns = ['*'];
         }
 
-        $builder->addSelect([static::pipeline($field, $nativeField, $value)]);
-
-        if($enableRelevanceHavingClause) {
-            $builder->orHaving('fuzzy_relevance_' . str_replace('.', '_', $field), '>', $relevance);
-        }
+        $builder->addSelect([static::pipeline($field, $nativeField, $value)])
+            ->when($enableRelevanceHavingClause, function (Builder $query) use($field, $relevance) {
+                $query->orHaving('fuzzy_relevance_' . str_replace('.', '_', $field), '>', $relevance);
+            });
 
         static::calculateTotalRelevanceColumn($builder);
 
@@ -138,19 +136,19 @@ class WhereFuzzy
             }
 
             // only add the _fuzzy_relevance_ ORDER once
-            if($enableRelevanceSort) {
-                if (
-                    ! $builder->orders
-                    || (
-                        $builder->orders
-                        && array_search(
-                            '_fuzzy_relevance_',
-                            array_column($builder->orders, 'column')
-                        ) === false
-                    )
-                ) {
-                    $builder->orderBy('_fuzzy_relevance_', 'desc');
-                }
+            if (
+                ! $builder->orders
+                || (
+                    $builder->orders
+                    && array_search(
+                        '_fuzzy_relevance_',
+                        array_column($builder->orders, 'column')
+                    ) === false
+                )
+            ) {
+                $builder->when($enableRelevanceSort, function (Builder $query) {
+                    $query->orderBy('_fuzzy_relevance_', 'desc');;
+                });
             }
 
             return true;
