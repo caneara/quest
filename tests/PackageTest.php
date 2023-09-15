@@ -36,6 +36,7 @@ class PackageTest extends TestCase
 
         app()['config']->set('database.default', 'mysql');
         app()['config']->set('database.connections.mysql', $setup);
+        app()['config']->set('quest.sort-and-return-matches', true);
 
         (new ServiceProvider(app()))->boot();
 
@@ -48,8 +49,7 @@ class PackageTest extends TestCase
         DB::table('users')->insert(['name' => 'Fred Doe', 'nickname' => 'fredrick', 'country' => 'France']);
         DB::table('users')->insert(['name' => 'William Doe', 'nickname' => 'willy', 'country' => 'Italy']);
 
-        Config::set('caneara-quest.enable-sort', true);
-        Config::set('caneara-quest.enable-relevance-having-clause', true);
+
     }
 
     /** @test */
@@ -212,7 +212,7 @@ class PackageTest extends TestCase
     /** @test */
     public function it_can_perform_an_eloquent_fuzzy_and_search_with_enabled_fuzzy_order()
     {
-        Config::set('caneara-quest.enable-sort', true);
+        app()['config']->set('quest.sort-and-return-matches', true);
 
         $results = User::whereFuzzy(function($query) {
             $query->whereFuzzy('name', 'jad');
@@ -226,7 +226,7 @@ class PackageTest extends TestCase
     /** @test */
     public function it_can_perform_an_eloquent_fuzzy_and_search_with_disabled_fuzzy_order()
     {
-        Config::set('caneara-quest.enable-sort', false);
+        app()['config']->set('quest.sort-and-return-matches', false);
 
         $results = User::whereFuzzy(function($query) {
             $query->whereFuzzy('name', 'jad');
@@ -240,7 +240,7 @@ class PackageTest extends TestCase
     /** @test */
     public function it_can_perform_an_eloquent_fuzzy_and_search_with_enabled_having_clause()
     {
-        Config::set('caneara-quest.enable-relevance-having-clause', true);
+        app()['config']->set('quest.sort-and-return-matches', true);
 
         $results = User::whereFuzzy(function($query) {
             $query->whereFuzzy('name', 'jad');
@@ -253,7 +253,7 @@ class PackageTest extends TestCase
     /** @test */
     public function it_can_perform_an_eloquent_fuzzy_and_search_with_disabled_having_clause()
     {
-        Config::set('caneara-quest.enable-relevance-having-clause', false);
+        app()['config']->set('quest.sort-and-return-matches', false);
 
         $results = User::whereFuzzy(function($query) {
             $query->whereFuzzy('name', 'jad');
