@@ -113,6 +113,14 @@ User::whereFuzzy(function ($query) {
     $query->orWhereFuzzy('email', 'gm', 90);
 })->get();
 ```
+## Options
+Enable/Disable Match Only
+
+If searching large tables to only confirm whether matches exist, removing sorting and relevance checking will significantly increase query performance. In the config/quest.php file you may specify whether you want to sort by relevance and return the matches or just return the relevance data to be handled.
+
+Set sort-and-return-matches => false to remove sorting and relevance checking
+
+To adjust the relevance threshold you can filter the relevance data Manually
 
 ## Limitations
 
