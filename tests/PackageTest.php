@@ -47,6 +47,9 @@ class PackageTest extends TestCase
         DB::table('users')->insert(['name' => 'Jane Doe', 'nickname' => 'jndoe', 'country' => 'United Kingdom']);
         DB::table('users')->insert(['name' => 'Fred Doe', 'nickname' => 'fredrick', 'country' => 'France']);
         DB::table('users')->insert(['name' => 'William Doe', 'nickname' => 'willy', 'country' => 'Italy']);
+
+        Config::set('caneara-quest.enable-sort', true);
+        Config::set('caneara-quest.enable-relevance-having-clause', true);
     }
 
     /** @test */
