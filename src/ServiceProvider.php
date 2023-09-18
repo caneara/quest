@@ -17,15 +17,9 @@ class ServiceProvider extends Provider
      **/
     public function boot(): void
     {
-        if ($this->app->runningInConsole()) {
-            $this->publishes([
-                __DIR__.'/config/quest.php' => config_path('quest.php'),
-            ], 'telescope-config');
-        }
-
         Builder::macro('orderByFuzzy', fn ($fields) => OrderByFuzzy::make($this, $fields));
 
-        Builder::macro('whereFuzzy', function($field, $value = null) {
+        Builder::macro('whereFuzzy', function($field, $value = null, $sortMatchesFilterRelevance = true) {
             // check if first param is a closure and execute it if it is, passing the current builder as parameter
             // so when $query->orWhereFuzzy, $query will be the current query builder, not a new instance
             if ($field instanceof Closure) {
@@ -35,17 +29,17 @@ class ServiceProvider extends Provider
             }
 
             // if $query->orWhereFuzzy is called in the closure, or directly by the query builder, do this
-            return WhereFuzzy::make($this, $field, $value);
+            return WhereFuzzy::make($this, $field, $value, $sortMatchesFilterRelevance);
         });
 
-        Builder::macro('orWhereFuzzy', function($field, $value = null, $relevance = 0) {
+        Builder::macro('orWhereFuzzy', function($field, $value = null, $relevance = 0, $sortMatchesFilterRelevance = true) {
             if ($field instanceof Closure) {
                 $field($this);
 
                 return $this;
             }
 
-            return WhereFuzzy::makeOr($this, $field, $value, $relevance);
+            return WhereFuzzy::makeOr($this, $field, $value, $relevance, $sortMatchesFilterRelevance);
         });
 
         Builder::macro('withMinimumRelevance', fn ($score) => withMinimumRelevance::make($this, $score));

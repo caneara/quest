@@ -24,7 +24,7 @@ class PackageTest extends TestCase
             'port'           => env('DB_PORT', 3306),
             'database'       => env('DB_DATABASE', 'testing'),
             'username'       => env('DB_USERNAME', 'root'),
-            'password'       => env('DB_PASSWORD', ''),
+            'password'       => env('DB_PASSWORD', 'root'),
             'unix_socket'    => env('DB_SOCKET', ''),
             'charset'        => 'utf8mb4',
             'collation'      => 'utf8mb4_unicode_520_ci',
@@ -36,7 +36,6 @@ class PackageTest extends TestCase
 
         app()['config']->set('database.default', 'mysql');
         app()['config']->set('database.connections.mysql', $setup);
-        app()['config']->set('quest.sort-and-return-matches', true);
 
         (new ServiceProvider(app()))->boot();
 
@@ -210,13 +209,11 @@ class PackageTest extends TestCase
     }
 
     /** @test */
-    public function it_can_perform_an_eloquent_fuzzy_and_search_with_enabled_fuzzy_order()
+    public function it_can_perform_an_eloquent_fuzzy_and_search_with_enabled_fuzzy_order_having_clause()
     {
-        app()['config']->set('quest.sort-and-return-matches', true);
-
         $results = User::whereFuzzy(function($query) {
-            $query->whereFuzzy('name', 'jad');
-            $query->whereFuzzy('name', 'William Doe');
+            $query->whereFuzzy('name', 'jad', true);
+            $query->whereFuzzy('name', 'William Doe', true);
 
         });
 
@@ -224,42 +221,14 @@ class PackageTest extends TestCase
     }
 
     /** @test */
-    public function it_can_perform_an_eloquent_fuzzy_and_search_with_disabled_fuzzy_order()
+    public function it_can_perform_an_eloquent_fuzzy_and_search_with_disabled_fuzzy_order_having_clause()
     {
-        app()['config']->set('quest.sort-and-return-matches', false);
-
         $results = User::whereFuzzy(function($query) {
-            $query->whereFuzzy('name', 'jad');
-            $query->whereFuzzy('name', 'wp');
+            $query->whereFuzzy('name', 'jad', false);
+            $query->whereFuzzy('name', 'wp', false);
 
         });
 
         $this->assertStringNotContainsString('order by', $results->toSql());
-    }
-
-    /** @test */
-    public function it_can_perform_an_eloquent_fuzzy_and_search_with_enabled_having_clause()
-    {
-        app()['config']->set('quest.sort-and-return-matches', true);
-
-        $results = User::whereFuzzy(function($query) {
-            $query->whereFuzzy('name', 'jad');
-            $query->whereFuzzy('name', 'William Doe');
-        });
-
-        $this->assertStringContainsString('having', $results->toSql());
-    }
-
-    /** @test */
-    public function it_can_perform_an_eloquent_fuzzy_and_search_with_disabled_having_clause()
-    {
-        app()['config']->set('quest.sort-and-return-matches', false);
-
-        $results = User::whereFuzzy(function($query) {
-            $query->whereFuzzy('name', 'jad');
-            $query->whereFuzzy('name', 'William Doe');
-        });
-
-        $this->assertStringNotContainsString('having', $results->toSql());
     }
 }
