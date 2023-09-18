@@ -23,12 +23,12 @@ class WhereFuzzy
     protected static array $matchers = [
         ExactMatcher::class                 => 100,
         StartOfStringMatcher::class         => 50,
-        AcronymMatcher::class               => 42,
-        ConsecutiveCharactersMatcher::class => 40,
+        //AcronymMatcher::class               => 42,
+        //ConsecutiveCharactersMatcher::class => 40,
         StartOfWordsMatcher::class          => 35,
-        StudlyCaseMatcher::class            => 32,
+        //StudlyCaseMatcher::class            => 32,
         InStringMatcher::class              => 30,
-        TimesInStringMatcher::class         => 8,
+        //TimesInStringMatcher::class         => 8,
     ];
 
     /**
