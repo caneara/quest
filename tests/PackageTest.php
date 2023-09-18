@@ -3,6 +3,9 @@
 namespace Quest\Tests;
 
 use Illuminate\Support\Facades\Config;
+use Quest\Macros\WhereFuzzy;
+use Quest\Matchers\AcronymMatcher;
+use Quest\Matchers\StudlyCaseMatcher;
 use Quest\ServiceProvider;
 use Orchestra\Testbench\TestCase;
 use Illuminate\Support\Facades\DB;
@@ -24,7 +27,7 @@ class PackageTest extends TestCase
             'port'           => env('DB_PORT', 3306),
             'database'       => env('DB_DATABASE', 'testing'),
             'username'       => env('DB_USERNAME', 'root'),
-            'password'       => env('DB_PASSWORD', ''),
+            'password'       => env('DB_PASSWORD', 'root'),
             'unix_socket'    => env('DB_SOCKET', ''),
             'charset'        => 'utf8mb4',
             'collation'      => 'utf8mb4_unicode_520_ci',
@@ -230,5 +233,27 @@ class PackageTest extends TestCase
         });
 
         $this->assertStringNotContainsString('order by', $results->toSql());
+    }
+
+    /** @test */
+    public function it_can_disable_matchers()
+    {
+        $results = User::whereFuzzy(function($query) {
+            $query->whereFuzzy('name', 'jad', true, [
+                'Quest\Matchers\StudlyCaseMatcher',
+            ]);
+        });
+
+        $this->assertStringNotContainsString("LIKE BINARY 'J%A%D%', 32, 0)", $results->toSql());
+    }
+
+    /** @test */
+    public function it_does_not_disable_matchers()
+    {
+        $results = User::whereFuzzy(function($query) {
+            $query->whereFuzzy('name', 'jad', true);
+        });
+
+        $this->assertStringContainsString("LIKE BINARY 'J%A%D%', 32, 0)", $results->toSql());
     }
 }

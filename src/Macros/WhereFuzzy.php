@@ -23,19 +23,19 @@ class WhereFuzzy
     protected static array $matchers = [
         ExactMatcher::class                 => 100,
         StartOfStringMatcher::class         => 50,
-        //AcronymMatcher::class               => 42,
-        //ConsecutiveCharactersMatcher::class => 40,
+        AcronymMatcher::class               => 42,
+        ConsecutiveCharactersMatcher::class => 40,
         StartOfWordsMatcher::class          => 35,
-        //StudlyCaseMatcher::class            => 32,
+        StudlyCaseMatcher::class            => 32,
         InStringMatcher::class              => 30,
-        //TimesInStringMatcher::class         => 8,
+        TimesInStringMatcher::class         => 8,
     ];
 
     /**
      * Construct a fuzzy search expression.
      *
      **/
-    public static function make(Builder $builder, $field, $value, $sortMatchesFilterRelevance): Builder
+    public static function make(Builder $builder, $field, $value, $sortMatchesFilterRelevance, $disabledMatchers): Builder
     {
         $value       = static::escapeValue($value);
         $nativeField = '`' . str_replace('.', '`.`', trim($field, '` ')) . '`';
@@ -45,7 +45,7 @@ class WhereFuzzy
         }
 
         $builder
-            ->addSelect([static::pipeline($field, $nativeField, $value)])
+            ->addSelect([static::pipeline($field, $nativeField, $value, $disabledMatchers)])
             ->when($sortMatchesFilterRelevance, function (Builder $query) use($field) {
                 $query->having('fuzzy_relevance_' . str_replace('.', '_', $field), '>', 0);
             });
@@ -59,7 +59,7 @@ class WhereFuzzy
      * Construct a fuzzy OR search expression.
      *
      **/
-    public static function makeOr(Builder $builder, $field, $value, $relevance, $sortMatchesFilterRelevance): Builder
+    public static function makeOr(Builder $builder, $field, $value, $relevance, $sortMatchesFilterRelevance, $disabledMatchers): Builder
     {
         $value       = static::escapeValue($value);
         $nativeField = '`' . str_replace('.', '`.`', trim($field, '` ')) . '`';
@@ -68,7 +68,7 @@ class WhereFuzzy
             $builder->columns = ['*'];
         }
 
-        $builder->addSelect([static::pipeline($field, $nativeField, $value)])
+        $builder->addSelect([static::pipeline($field, $nativeField, $value, $disabledMatchers)])
             ->when($sortMatchesFilterRelevance, function (Builder $query) use($field, $relevance) {
                 $query->orHaving('fuzzy_relevance_' . str_replace('.', '_', $field), '>', $relevance);
             });
@@ -166,9 +166,9 @@ class WhereFuzzy
      * Execute each of the pattern matching classes to generate the required SQL.
      *
      **/
-    protected static function pipeline($field, $native, $value): Expression
+    protected static function pipeline($field, $native, $value, $disabledMatchers): Expression
     {
-        $sql = collect(static::$matchers)->map(
+        $sql = collect(static::$matchers)->forget($disabledMatchers)->map(
             fn ($multiplier, $matcher) => (new $matcher($multiplier))->buildQueryString("COALESCE($native, '')", $value)
         );
 
