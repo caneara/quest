@@ -240,7 +240,7 @@ class PackageTest extends TestCase
     {
         $results = User::whereFuzzy(function($query) {
             $query->whereFuzzy('name', 'jad', true, [
-                'Quest\Matchers\StudlyCaseMatcher',
+                'StudlyCaseMatcher',
             ]);
         });
 

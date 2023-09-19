@@ -168,6 +168,8 @@ class WhereFuzzy
      **/
     protected static function pipeline($field, $native, $value, $disabledMatchers): Expression
     {
+        $disabledMatchers = preg_filter('/^/', 'Quest\Matchers\\', $disabledMatchers);
+
         $sql = collect(static::$matchers)->forget($disabledMatchers)->map(
             fn ($multiplier, $matcher) => (new $matcher($multiplier))->buildQueryString("COALESCE($native, '')", $value)
         );
