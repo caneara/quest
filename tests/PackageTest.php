@@ -3,6 +3,9 @@
 namespace Quest\Tests;
 
 use Illuminate\Support\Facades\Config;
+use Quest\Macros\WhereFuzzy;
+use Quest\Matchers\AcronymMatcher;
+use Quest\Matchers\StudlyCaseMatcher;
 use Quest\ServiceProvider;
 use Orchestra\Testbench\TestCase;
 use Illuminate\Support\Facades\DB;
@@ -36,7 +39,6 @@ class PackageTest extends TestCase
 
         app()['config']->set('database.default', 'mysql');
         app()['config']->set('database.connections.mysql', $setup);
-        app()['config']->set('quest.sort-and-return-matches', true);
 
         (new ServiceProvider(app()))->boot();
 
@@ -210,13 +212,11 @@ class PackageTest extends TestCase
     }
 
     /** @test */
-    public function it_can_perform_an_eloquent_fuzzy_and_search_with_enabled_fuzzy_order()
+    public function it_can_perform_an_eloquent_fuzzy_and_search_with_enabled_fuzzy_order_having_clause()
     {
-        app()['config']->set('quest.sort-and-return-matches', true);
-
         $results = User::whereFuzzy(function($query) {
-            $query->whereFuzzy('name', 'jad');
-            $query->whereFuzzy('name', 'William Doe');
+            $query->whereFuzzy('name', 'jad', true);
+            $query->whereFuzzy('name', 'William Doe', true);
 
         });
 
@@ -224,13 +224,11 @@ class PackageTest extends TestCase
     }
 
     /** @test */
-    public function it_can_perform_an_eloquent_fuzzy_and_search_with_disabled_fuzzy_order()
+    public function it_can_perform_an_eloquent_fuzzy_and_search_with_disabled_fuzzy_order_having_clause()
     {
-        app()['config']->set('quest.sort-and-return-matches', false);
-
         $results = User::whereFuzzy(function($query) {
-            $query->whereFuzzy('name', 'jad');
-            $query->whereFuzzy('name', 'wp');
+            $query->whereFuzzy('name', 'jad', false);
+            $query->whereFuzzy('name', 'wp', false);
 
         });
 
@@ -238,28 +236,24 @@ class PackageTest extends TestCase
     }
 
     /** @test */
-    public function it_can_perform_an_eloquent_fuzzy_and_search_with_enabled_having_clause()
+    public function it_can_disable_matchers()
     {
-        app()['config']->set('quest.sort-and-return-matches', true);
-
         $results = User::whereFuzzy(function($query) {
-            $query->whereFuzzy('name', 'jad');
-            $query->whereFuzzy('name', 'William Doe');
+            $query->whereFuzzy('name', 'jad', true, [
+                'StudlyCaseMatcher',
+            ]);
         });
 
-        $this->assertStringContainsString('having', $results->toSql());
+        $this->assertStringNotContainsString("LIKE BINARY 'J%A%D%', 32, 0)", $results->toSql());
     }
 
     /** @test */
-    public function it_can_perform_an_eloquent_fuzzy_and_search_with_disabled_having_clause()
+    public function it_does_not_disable_matchers()
     {
-        app()['config']->set('quest.sort-and-return-matches', false);
-
         $results = User::whereFuzzy(function($query) {
-            $query->whereFuzzy('name', 'jad');
-            $query->whereFuzzy('name', 'William Doe');
+            $query->whereFuzzy('name', 'jad', true);
         });
 
-        $this->assertStringNotContainsString('having', $results->toSql());
+        $this->assertStringContainsString("LIKE BINARY 'J%A%D%', 32, 0)", $results->toSql());
     }
 }

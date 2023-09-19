@@ -35,10 +35,8 @@ class WhereFuzzy
      * Construct a fuzzy search expression.
      *
      **/
-    public static function make(Builder $builder, $field, $value): Builder
+    public static function make(Builder $builder, $field, $value, $sortMatchesFilterRelevance, $disabledMatchers): Builder
     {
-        $matchOnly = config('quest.sort-and-return-matches');
-
         $value       = static::escapeValue($value);
         $nativeField = '`' . str_replace('.', '`.`', trim($field, '` ')) . '`';
 
@@ -47,12 +45,12 @@ class WhereFuzzy
         }
 
         $builder
-            ->addSelect([static::pipeline($field, $nativeField, $value)])
-            ->when($matchOnly, function (Builder $query) use($field) {
+            ->addSelect([static::pipeline($field, $nativeField, $value, $disabledMatchers)])
+            ->when($sortMatchesFilterRelevance, function (Builder $query) use($field) {
                 $query->having('fuzzy_relevance_' . str_replace('.', '_', $field), '>', 0);
             });
 
-        static::calculateTotalRelevanceColumn($builder);
+        static::calculateTotalRelevanceColumn($builder, $sortMatchesFilterRelevance);
 
         return $builder;
     }
@@ -61,10 +59,8 @@ class WhereFuzzy
      * Construct a fuzzy OR search expression.
      *
      **/
-    public static function makeOr(Builder $builder, $field, $value, $relevance): Builder
+    public static function makeOr(Builder $builder, $field, $value, $relevance, $sortMatchesFilterRelevance, $disabledMatchers): Builder
     {
-        $matchOnly = config('quest.sort-and-return-matches');
-
         $value       = static::escapeValue($value);
         $nativeField = '`' . str_replace('.', '`.`', trim($field, '` ')) . '`';
 
@@ -72,12 +68,12 @@ class WhereFuzzy
             $builder->columns = ['*'];
         }
 
-        $builder->addSelect([static::pipeline($field, $nativeField, $value)])
-            ->when($matchOnly, function (Builder $query) use($field, $relevance) {
+        $builder->addSelect([static::pipeline($field, $nativeField, $value, $disabledMatchers)])
+            ->when($sortMatchesFilterRelevance, function (Builder $query) use($field, $relevance) {
                 $query->orHaving('fuzzy_relevance_' . str_replace('.', '_', $field), '>', $relevance);
             });
 
-        static::calculateTotalRelevanceColumn($builder);
+        static::calculateTotalRelevanceColumn($builder, $sortMatchesFilterRelevance);
 
         return $builder;
     }
@@ -90,10 +86,8 @@ class WhereFuzzy
      * and creates the order statement for it.
      *
      */
-    protected static function calculateTotalRelevanceColumn($builder): bool
+    protected static function calculateTotalRelevanceColumn($builder, $sortMatchesFilterRelevance): bool
     {
-        $matchOnly = config('quest.sort-and-return-matches');
-
         if (! empty($builder->columns)) {
             $existingRelevanceColumns = [];
             $sumColumnIdx             = null;
@@ -146,7 +140,7 @@ class WhereFuzzy
                     ) === false
                 )
             ) {
-                $builder->when($matchOnly, function (Builder $query) {
+                $builder->when($sortMatchesFilterRelevance, function (Builder $query) {
                     $query->orderBy('_fuzzy_relevance_', 'desc');;
                 });
             }
@@ -172,9 +166,11 @@ class WhereFuzzy
      * Execute each of the pattern matching classes to generate the required SQL.
      *
      **/
-    protected static function pipeline($field, $native, $value): Expression
+    protected static function pipeline($field, $native, $value, $disabledMatchers): Expression
     {
-        $sql = collect(static::$matchers)->map(
+        $disabledMatchers = preg_filter('/^/', 'Quest\Matchers\\', $disabledMatchers);
+
+        $sql = collect(static::$matchers)->forget($disabledMatchers)->map(
             fn ($multiplier, $matcher) => (new $matcher($multiplier))->buildQueryString("COALESCE($native, '')", $value)
         );
 

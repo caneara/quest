@@ -113,14 +113,36 @@ User::whereFuzzy(function ($query) {
     $query->orWhereFuzzy('email', 'gm', 90);
 })->get();
 ```
-## Options
-Enable/Disable Match Only
 
-If searching large tables to only confirm whether matches exist, removing sorting and relevance checking will significantly increase query performance. In the config/quest.php file you may specify whether you want to sort by relevance and return the matches or just return the relevance data to be handled.
+When searching large tables to only confirm whether matches exist, removing sorting and relevance checking will significantly increase query performance. To adjust the relevance threshold you can filter the relevance data Manually
 
-Set sort-and-return-matches => false to remove sorting and relevance checking
+```php
+DB::table('users')
+  ->whereFuzzy('name', 'jd', false) 
+  ->orWhereFuzzy('name', 'gm', 0, false);
+  ->first();
+```
 
-To adjust the relevance threshold you can filter the relevance data Manually
+When searching large tables, removing matchers will significantly increase query performance.
+
+```php
+DB::table('users')
+  ->whereFuzzy('name', 'jd', [
+    'AcronymMatcher',
+    'StudlyCaseMatcher',
+  ]);
+  ->first();
+```
+#### Matchers
+- ExactMatcher
+- StartOfStringMatcher
+- AcronymMatcher
+- ConsecutiveCharactersMatcher
+- StartOfWordsMatcher
+- StudlyCaseMatcher
+- InStringMatcher
+- TimesInStringMatcher
+
 
 ## Limitations
 
