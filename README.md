@@ -114,6 +114,36 @@ User::whereFuzzy(function ($query) {
 })->get();
 ```
 
+When searching large tables to only confirm whether matches exist, removing sorting and relevance checking will significantly increase query performance. To adjust the relevance threshold you can filter the relevance data Manually
+
+```php
+DB::table('users')
+  ->whereFuzzy('name', 'jd', false) 
+  ->orWhereFuzzy('name', 'gm', 0, false);
+  ->first();
+```
+
+When searching large tables, removing matchers will significantly increase query performance.
+
+```php
+DB::table('users')
+  ->whereFuzzy('name', 'jd', [
+    'AcronymMatcher',
+    'StudlyCaseMatcher',
+  ]);
+  ->first();
+```
+#### Matchers
+- ExactMatcher
+- StartOfStringMatcher
+- AcronymMatcher
+- ConsecutiveCharactersMatcher
+- StartOfWordsMatcher
+- StudlyCaseMatcher
+- InStringMatcher
+- TimesInStringMatcher
+
+
 ## Limitations
 
 It is not possible to use the `paginate` method with Quest as the relevance fields are omitted from the secondary query that Laravel runs to get the count of the records required for `LengthAwarePaginator`. However, you can use the `simplePaginate` method without issue. In many cases this a more preferable option anyway, particularly when dealing with large datasets as the `paginate` method becomes slow when scrolling through large numbers of pages.
