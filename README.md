@@ -114,7 +114,9 @@ User::whereFuzzy(function ($query) {
 })->get();
 ```
 
-When searching large tables to only confirm whether matches exist, removing sorting and relevance checking will significantly increase query performance. To adjust the relevance threshold you can filter the relevance data Manually
+### Performance (large datasets)
+
+When searching large tables to only confirm whether matches exist, removing sorting and relevance checking will significantly increase query performance. To do this, simply supply `false` as a third parameter for the `whereFuzzy` or `orWhereFuzzy` methods:
 
 ```php
 DB::table('users')
@@ -123,17 +125,21 @@ DB::table('users')
   ->first();
 ```
 
-When searching large tables, removing matchers will significantly increase query performance.
+To adjust the relevance threshold you can filter the relevance data manually if needed.
+
+You can also further improve performance by selectively disabling one or more pattern matchers. Simply supply an `array` of pattern matchers you want to disable as the fourth parameter e.g.
 
 ```php
 DB::table('users')
-  ->whereFuzzy('name', 'jd', [
+  ->whereFuzzy('name', 'jd', true, [
     'AcronymMatcher',
     'StudlyCaseMatcher',
   ]);
   ->first();
 ```
-#### Matchers
+
+The following pattern matchers can be included in the `array`:
+
 - ExactMatcher
 - StartOfStringMatcher
 - AcronymMatcher
@@ -143,6 +149,7 @@ DB::table('users')
 - InStringMatcher
 - TimesInStringMatcher
 
+Review the `/src/Matchers` directory to see what each matcher does for a query.
 
 ## Limitations
 
