@@ -46,7 +46,7 @@ class WhereFuzzy
 
         $builder
             ->addSelect([static::pipeline($field, $nativeField, $value, $disabledMatchers)])
-            ->when($sortMatchesFilterRelevance, function (Builder $query) use($field) {
+            ->when($sortMatchesFilterRelevance, function(Builder $query) use ($field) {
                 $query->having('fuzzy_relevance_' . str_replace('.', '_', $field), '>', 0);
             });
 
@@ -69,7 +69,7 @@ class WhereFuzzy
         }
 
         $builder->addSelect([static::pipeline($field, $nativeField, $value, $disabledMatchers)])
-            ->when($sortMatchesFilterRelevance, function (Builder $query) use($field, $relevance) {
+            ->when($sortMatchesFilterRelevance, function(Builder $query) use ($field, $relevance) {
                 $query->orHaving('fuzzy_relevance_' . str_replace('.', '_', $field), '>', $relevance);
             });
 
@@ -140,8 +140,9 @@ class WhereFuzzy
                     ) === false
                 )
             ) {
-                $builder->when($sortMatchesFilterRelevance, function (Builder $query) {
-                    $query->orderBy('_fuzzy_relevance_', 'desc');;
+                $builder->when($sortMatchesFilterRelevance, function(Builder $query) {
+                    $query->orderBy('_fuzzy_relevance_', 'desc');
+                    ;
                 });
             }
 

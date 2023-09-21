@@ -2,10 +2,6 @@
 
 namespace Quest\Tests;
 
-use Illuminate\Support\Facades\Config;
-use Quest\Macros\WhereFuzzy;
-use Quest\Matchers\AcronymMatcher;
-use Quest\Matchers\StudlyCaseMatcher;
 use Quest\ServiceProvider;
 use Orchestra\Testbench\TestCase;
 use Illuminate\Support\Facades\DB;
